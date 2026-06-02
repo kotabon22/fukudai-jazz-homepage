@@ -1,9 +1,44 @@
 {
   "members": [
-    {"name":"田中 ○○","role":"President","role_jp":"部長","instrument":"Alto Sax","year":"3年","emoji":"🎷"},
-    {"name":"鈴木 ○○","role":"Vice President","role_jp":"副部長","instrument":"Trumpet","year":"3年","emoji":"🎺"},
-    {"name":"山田 ○○","role":"Member","role_jp":"","instrument":"Piano","year":"2年","emoji":"🎹"},
-    {"name":"佐藤 ○○","role":"Member","role_jp":"","instrument":"Drums","year":"2年","emoji":"🥁"},
-    {"name":"伊藤 ○○","role":"Member","role_jp":"","instrument":"Bass","year":"1年","emoji":"🎸"}
+    {
+      "name": "鈴木 健太郎",
+      "role": "Vice President",
+      "role_jp": "副部長",
+      "instrument": "バストロンボーーーん",
+      "year": "3年",
+      "emoji": "🎺"
+    },
+    {
+      "name": "山田 ○○",
+      "role": "Member",
+      "role_jp": "",
+      "instrument": "Piano",
+      "year": "2年",
+      "emoji": "🎹"
+    },
+    {
+      "name": "田中 ○○",
+      "role": "President",
+      "role_jp": "部長",
+      "instrument": "Alto Sax",
+      "year": "3年",
+      "emoji": "🎷"
+    },
+    {
+      "name": "佐藤 ○○",
+      "role": "Member",
+      "role_jp": "",
+      "instrument": "Drums",
+      "year": "2年",
+      "emoji": "🥁"
+    },
+    {
+      "name": "伊藤 ○○",
+      "role": "Member",
+      "role_jp": "",
+      "instrument": "Bass",
+      "year": "1年",
+      "emoji": "🎸"
+    }
   ]
 }
