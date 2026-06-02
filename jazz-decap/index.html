@@ -6,10 +6,15 @@
   <title id="page-title">福井大学ジャズ研究会</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Special+Elite&family=Noto+Serif+JP:wght@300;400;700&display=swap" rel="stylesheet">
+  
   <!-- marked.js for Markdown parsing -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <!-- js-yaml for frontmatter parsing -->
   <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js.yaml.min.js"></script>
+  
+  <!-- 【追加】Netlify Identity Widget: ログイン機能を有効にします -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
   <style>
     /* ===== VARIABLES ===== */
     :root {
@@ -310,12 +315,9 @@ async function fetchText(url) {
 }
 
 // Fetch a list of .md files from a directory listing (works on Netlify)
-// We list known posts via a manifest or just try a directory fetch
 async function loadMarkdownList(dir) {
   try {
-    // Try fetching index listing (works if Netlify has a directory listing or we have a manifest)
     const txt = await fetchText(dir + '/');
-    // Parse <a href="filename.md"> links
     const links = [...txt.matchAll(/href="([^"]+\.md)"/g)].map(m => m[1]);
     const results = [];
     for (const lnk of links) {
@@ -325,7 +327,6 @@ async function loadMarkdownList(dir) {
     }
     return results;
   } catch(e) {
-    // Fallback: try loading from a manifest file _posts/manifest.json
     try {
       const manifest = await fetchJSON(dir + '/manifest.json');
       const results = [];
@@ -355,7 +356,6 @@ async function loadAll() {
     G.sections = sec.sections || [];
   } catch(e) { console.warn('Data load error', e); }
 
-  // Posts & Albums (markdown)
   const [posts, albums] = await Promise.all([
     loadMarkdownList('_posts'),
     loadMarkdownList('_album'),
@@ -371,16 +371,13 @@ async function loadAll() {
 // ═══════════════════════════════════════════════════
 function renderAll() {
   const cfg = G.cfg;
-  // Hero
   document.getElementById('heroEyebrow').textContent = `Fukui University · Est. ${cfg.established || '——'}`;
   document.getElementById('heroJp').textContent = cfg.club_name || '福井大学ジャズ研究会';
   document.getElementById('heroCta1').href = cfg.form_url || '#join';
   document.title = cfg.club_name || '福井大学ジャズ研究会';
-  // Footer
   document.getElementById('footerSub').textContent = cfg.club_name_en || '';
   document.getElementById('footerCopy').textContent = `© ${new Date().getFullYear()} ${cfg.club_name || '福井大学ジャズ研究会'} · All Rights Reserved`;
 
-  // Nav
   const enabledSections = G.sections.filter(s => s.enabled);
   const navLinks = document.getElementById('navLinks');
   const mobileMenu = document.getElementById('mobileMenu');
@@ -390,13 +387,10 @@ function renderAll() {
   mobileMenu.innerHTML = enabledSections.map(s =>
     `<a href="#${s.id}" onclick="closeMenu()">${s.label}</a>`
   ).join('');
-
-  // Footer nav links
   document.getElementById('footerLinks').innerHTML = enabledSections.slice(0,5).map(s =>
     `<li><a href="#${s.id}">${s.label}</a></li>`
   ).join('');
 
-  // Dynamic sections
   const container = document.getElementById('dynamic-sections');
   container.innerHTML = '';
   let prevType = null;
@@ -414,9 +408,7 @@ function renderAll() {
     }
   });
 
-  // Floating notes
   startNotes();
-  // Scroll reveal
   setupReveal();
 }
 
@@ -447,23 +439,7 @@ function buildAbout(sec) {
   const wrap = el('section','');
   wrap.id = sec.id;
   wrap.style.background = 'var(--cream)';
-  wrap.innerHTML = `
-    <div class="section-inner">
-      <div class="about-grid">
-        <div class="about-text reveal">
-          <div class="section-label">About Us</div>
-          <h2 class="section-title">福大ジャズ研<br>について</h2>
-          <p>福井大学ジャズ研究会は、ジャズを愛するすべての学生が集まるサークルです。初心者から経験者まで、ジャンルにとらわれず、ともに音楽を楽しむことを大切にしています。</p>
-          <p>週の練習では基礎から応用まで幅広く取り組み、学園祭や学外ライブなど年間を通じて多くの演奏機会があります。楽器未経験でも大歓迎です。</p>
-          <div class="stat-row">
-            <div class="stat"><div class="stat-num">${cfg.member_count||'30+'}</div><div class="stat-label">メンバー</div></div>
-            <div class="stat"><div class="stat-num">${cfg.years||'10+'}</div><div class="stat-label">年の歴史</div></div>
-            <div class="stat"><div class="stat-num">${cfg.live_count||'5+'}</div><div class="stat-label">年間ライブ</div></div>
-          </div>
-        </div>
-        <div class="reveal"><div class="vinyl-wrap"><div class="vinyl"></div></div></div>
-      </div>
-    </div>`;
+  wrap.innerHTML = `<div class="section-inner"><div class="about-grid"><div class="about-text reveal"><div class="section-label">About Us</div><h2 class="section-title">福大ジャズ研<br>について</h2><p>福井大学ジャズ研究会は、ジャズを愛するすべての学生が集まるサークルです。初心者から経験者まで、ジャンルにとらわれず、ともに音楽を楽しむことを大切にしています。</p><p>楽器未経験でも大歓迎です。</p><div class="stat-row"><div class="stat"><div class="stat-num">${cfg.member_count||'30+'}</div><div class="stat-label">メンバー</div></div><div class="stat"><div class="stat-num">${cfg.years||'10+'}</div><div class="stat-label">年の歴史</div></div><div class="stat"><div class="stat-num">${cfg.live_count||'5+'}</div><div class="stat-label">年間ライブ</div></div></div></div><div class="reveal"><div class="vinyl-wrap"><div class="vinyl"></div></div></div></div></div>`;
   return wrap;
 }
 
@@ -471,17 +447,8 @@ function buildAbout(sec) {
 function buildSchedule(sec) {
   const wrap = el('section','');
   wrap.id = sec.id;
-  const cards = G.schedule.map(s => `
-    <div class="schedule-card reveal">
-      <div class="sched-day">${s.day}</div>
-      <div class="sched-title">${s.icon} ${s.title}</div>
-      <div class="sched-detail">${s.detail}<br>${s.place}</div>
-    </div>`).join('');
-  wrap.innerHTML = `
-    <div class="section-inner">
-      <div class="reveal"><div class="section-label">Activity</div><h2 class="section-title">活動スケジュール</h2></div>
-      <div class="schedule-grid">${cards}</div>
-    </div>`;
+  const cards = G.schedule.map(s => `<div class="schedule-card reveal"><div class="sched-day">${s.day}</div><div class="sched-title">${s.icon} ${s.title}</div><div class="sched-detail">${s.detail}<br>${s.place}</div></div>`).join('');
+  wrap.innerHTML = `<div class="section-inner"><div class="reveal"><div class="section-label">Activity</div><h2 class="section-title">活動スケジュール</h2></div><div class="schedule-grid">${cards}</div></div>`;
   return wrap;
 }
 
@@ -491,25 +458,11 @@ function buildReports(sec) {
   wrap.id = sec.id;
   wrap.style.background = 'var(--cream)';
   const cards = G.posts.map(p => {
-    const thumb = p.image
-      ? `<img src="${p.image}" class="report-thumb" alt="${p.title}">`
-      : `<div class="report-placeholder">${p.emoji||'🎵'}</div>`;
+    const thumb = p.image ? `<img src="${p.image}" class="report-thumb" alt="${p.title}">` : `<div class="report-placeholder">${p.emoji||'🎵'}</div>`;
     const excerpt = (p.body||'').replace(/[#*`>\-]/g,'').slice(0,100) + '…';
-    return `
-      <a class="report-card reveal" href="#" onclick="showPost('${p.slug}');return false;">
-        ${thumb}
-        <div class="report-body">
-          <div class="report-date">${p.date||''}</div>
-          <div class="report-title">${p.title||''}</div>
-          <div class="report-desc">${excerpt}</div>
-        </div>
-      </a>`;
+    return `<a class="report-card reveal" href="#" onclick="showPost('${p.slug}');return false;">${thumb}<div class="report-body"><div class="report-date">${p.date||''}</div><div class="report-title">${p.title||''}</div><div class="report-desc">${excerpt}</div></div></a>`;
   }).join('');
-  wrap.innerHTML = `
-    <div class="section-inner">
-      <div class="reveal"><div class="section-label">Activity Reports</div><h2 class="section-title">活動報告</h2></div>
-      <div class="reports-grid">${cards || '<p style="color:var(--smoke)">まだ記事がありません。</p>'}</div>
-    </div>`;
+  wrap.innerHTML = `<div class="section-inner"><div class="reveal"><div class="section-label">Activity Reports</div><h2 class="section-title">活動報告</h2></div><div class="reports-grid">${cards || '<p style="color:var(--smoke)">まだ記事がありません。</p>'}</div></div>`;
   return wrap;
 }
 
@@ -518,22 +471,10 @@ function buildAlbum(sec) {
   const wrap = el('section','');
   wrap.id = sec.id;
   const sections = G.albums.map((alb, ai) => {
-    const imgs = (alb.images||[]).map((src, ii) =>
-      `<img src="${src}" class="album-img" alt="${alb.title}" loading="lazy"
-            onclick="openLightbox(${ai}, ${ii})">`
-    ).join('');
-    return `
-      <div class="album-section reveal">
-        <h3 style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;margin-bottom:.4rem">${alb.title}</h3>
-        ${alb.caption ? `<p class="album-caption">${alb.caption}</p>` : ''}
-        <div class="album-grid">${imgs || '<p style="color:var(--smoke);font-size:.85rem">写真はCMSからアップロードできます</p>'}</div>
-      </div>`;
+    const imgs = (alb.images||[]).map((src, ii) => `<img src="${src}" class="album-img" alt="${alb.title}" loading="lazy" onclick="openLightbox(${ai}, ${ii})">`).join('');
+    return `<div class="album-section reveal"><h3 style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;margin-bottom:.4rem">${alb.title}</h3>${alb.caption ? `<p class="album-caption">${alb.caption}</p>` : ''}<div class="album-grid">${imgs || '<p style="color:var(--smoke);font-size:.85rem">写真はCMSからアップロードできます</p>'}</div></div>`;
   }).join('');
-  wrap.innerHTML = `
-    <div class="section-inner">
-      <div class="reveal"><div class="section-label">Photo Album</div><h2 class="section-title">フォトアルバム</h2></div>
-      ${sections || '<p style="color:var(--smoke)">アルバムはCMSから作成できます。</p>'}
-    </div>`;
+  wrap.innerHTML = `<div class="section-inner"><div class="reveal"><div class="section-label">Photo Album</div><h2 class="section-title">フォトアルバム</h2></div>${sections || '<p style="color:var(--smoke)">アルバムはCMSから作成できます。</p>'}</div>`;
   return wrap;
 }
 
@@ -542,29 +483,8 @@ function buildMembers(sec) {
   const wrap = el('section','');
   wrap.id = sec.id;
   wrap.style.background = 'var(--ink)';
-  const cards = G.members.map(m => `
-    <div class="member-card reveal">
-      <div class="member-avatar">${m.emoji}</div>
-      <div class="member-name">${m.role_jp ? m.role_jp+'　' : ''}${m.name}</div>
-      <div class="member-role">${m.role}</div>
-      <div class="member-inst">${m.instrument}${m.year ? ' · '+m.year : ''}</div>
-    </div>`).join('');
-  wrap.innerHTML = `
-    <div class="section-inner">
-      <div class="reveal">
-        <div class="section-label" style="color:var(--gold)">Members</div>
-        <h2 class="section-title" style="color:var(--paper)">メンバー紹介</h2>
-      </div>
-      <div class="members-grid">
-        ${cards}
-        <div class="member-card reveal">
-          <div class="member-avatar">🎵</div>
-          <div class="member-name">新メンバー募集中！</div>
-          <div class="member-role">Join Us</div>
-          <div class="member-inst">あなたの楽器で</div>
-        </div>
-      </div>
-    </div>`;
+  const cards = G.members.map(m => `<div class="member-card reveal"><div class="member-avatar">${m.emoji}</div><div class="member-name">${m.role_jp ? m.role_jp+'　' : ''}${m.name}</div><div class="member-role">${m.role}</div><div class="member-inst">${m.instrument}${m.year ? ' · '+m.year : ''}</div></div>`).join('');
+  wrap.innerHTML = `<div class="section-inner"><div class="reveal"><div class="section-label" style="color:var(--gold)">Members</div><h2 class="section-title" style="color:var(--paper)">メンバー紹介</h2></div><div class="members-grid">${cards}<div class="member-card reveal"><div class="member-avatar">🎵</div><div class="member-name">新メンバー募集中！</div><div class="member-role">Join Us</div><div class="member-inst">あなたの楽器で</div></div></div></div>`;
   return wrap;
 }
 
@@ -573,19 +493,8 @@ function buildLinks(sec) {
   const wrap = el('section','');
   wrap.id = sec.id;
   wrap.style.background = 'var(--cream)';
-  const items = G.links.map(lnk => `
-    <a class="link-item reveal" href="${lnk.url}" target="_blank" rel="noopener"
-       style="--lc:${lnk.color||'var(--gold)'}">
-      <style>.link-item[href="${lnk.url}"]::before{background:${lnk.color||'var(--gold)'}}</style>
-      <span class="link-icon">${lnk.icon}</span>
-      <span class="link-label">${lnk.label}</span>
-      <span class="link-arrow">→</span>
-    </a>`).join('');
-  wrap.innerHTML = `
-    <div class="section-inner">
-      <div class="reveal"><div class="section-label">Links</div><h2 class="section-title">リンク</h2></div>
-      <div class="links-inner">${items}</div>
-    </div>`;
+  const items = G.links.map(lnk => `<a class="link-item reveal" href="${lnk.url}" target="_blank" rel="noopener" style="--lc:${lnk.color||'var(--gold)'}"><style>.link-item[href="${lnk.url}"]::before{background:${lnk.color||'var(--gold)'}}</style><span class="link-icon">${lnk.icon}</span><span class="link-label">${lnk.label}</span><span class="link-arrow">→</span></a>`).join('');
+  wrap.innerHTML = `<div class="section-inner"><div class="reveal"><div class="section-label">Links</div><h2 class="section-title">リンク</h2></div><div class="links-inner">${items}</div></div>`;
   return wrap;
 }
 
@@ -594,27 +503,7 @@ function buildJoin(sec) {
   const wrap = el('section','');
   wrap.id = sec.id;
   const formUrl = G.cfg.form_url || '#';
-  wrap.innerHTML = `
-    <div class="join-inner">
-      <div class="reveal">
-        <div class="join-deco">♪</div>
-        <div class="section-label" style="text-align:center">Join &amp; Contact</div>
-        <h2 class="section-title" style="text-align:center">一緒に演奏しよう</h2>
-        <p style="color:var(--smoke);font-size:1rem;line-height:1.9;margin-bottom:2.5rem">
-          ジャズに興味があるなら、楽器が初めてでも大歓迎。<br>見学はいつでも受け付けています。</p>
-      </div>
-      <div class="join-cards reveal">
-        <div class="join-card"><div class="join-card-icon">🎷</div><div class="join-card-title">入部希望</div><div class="join-card-text">フォームから入部希望をお送りください。楽器未経験者も歓迎です。</div></div>
-        <div class="join-card"><div class="join-card-icon">👁</div><div class="join-card-title">見学・体験</div><div class="join-card-text">練習日に見学・体験参加OK。事前連絡ください。</div></div>
-        <div class="join-card"><div class="join-card-icon">📅</div><div class="join-card-title">活動日程</div><div class="join-card-text">水曜・土曜が主な活動日。スケジュール参照。</div></div>
-        <div class="join-card"><div class="join-card-icon">📬</div><div class="join-card-title">お問い合わせ</div><div class="join-card-text">ご質問やライブ出演依頼も同フォームからどうぞ。</div></div>
-      </div>
-      <div class="reveal">
-        <a href="${formUrl}" target="_blank" class="btn btn-primary" style="font-size:1rem;padding:1.1rem 3rem">
-          入部・お問い合わせフォームへ →
-        </a>
-      </div>
-    </div>`;
+  wrap.innerHTML = `<div class="join-inner"><div class="reveal"><div class="join-deco">♪</div><div class="section-label" style="text-align:center">Join &amp; Contact</div><h2 class="section-title" style="text-align:center">一緒に演奏しよう</h2><p style="color:var(--smoke);font-size:1rem;line-height:1.9;margin-bottom:2.5rem">見学はいつでも受け付けています。</p></div><div class="join-cards reveal"><div class="join-card"><div class="join-card-icon">🎷</div><div class="join-card-title">入部希望</div><div class="join-card-text">フォームから入部希望をお送りください。</div></div><div class="join-card"><div class="join-card-icon">📬</div><div class="join-card-title">お問い合わせ</div><div class="join-card-text">ご質問や出演依頼もこちらから。</div></div></div><div class="reveal"><a href="${formUrl}" target="_blank" class="btn btn-primary" style="font-size:1rem;padding:1.1rem 3rem">フォームへ →</a></div></div>`;
   return wrap;
 }
 
@@ -623,93 +512,46 @@ function buildCustom(sec) {
   if (!sec.content) return null;
   const wrap = el('section','custom-section');
   wrap.id = sec.id;
-  wrap.innerHTML = `
-    <div class="section-inner">
-      <div class="reveal">
-        <div class="section-label">${sec.label}</div>
-        <div class="custom-body">${marked.parse(sec.content)}</div>
-      </div>
-    </div>`;
+  wrap.innerHTML = `<div class="section-inner"><div class="reveal"><div class="section-label">${sec.label}</div><div class="custom-body">${marked.parse(sec.content)}</div></div></div>`;
   return wrap;
 }
 
 // ═══════════════════════════════════════════════════
-// POST PAGE
+// POST PAGE / UI HELPERS
 // ═══════════════════════════════════════════════════
 function showPost(slug) {
   const post = G.posts.find(p => p.slug === slug);
   if (!post) return;
-
   document.getElementById('home-page').style.display = 'none';
   document.getElementById('post-page').style.display = 'block';
   window.scrollTo(0, 0);
-
   document.getElementById('postTitle').textContent = (post.emoji||'') + ' ' + (post.title||'');
-  document.getElementById('postMeta').innerHTML =
-    `<span>📅 ${post.date||''}</span>` +
-    (post.tags||[]).map(t => `<span style="font-family:'Special Elite',cursive;font-size:.7rem;background:rgba(201,150,42,.15);color:var(--gold);border:1px solid rgba(201,150,42,.3);padding:.15rem .5rem">${t}</span>`).join('');
-
-  // Eyecatch
+  document.getElementById('postMeta').innerHTML = `<span>📅 ${post.date||''}</span>` + (post.tags||[]).map(t => `<span style="font-family:'Special Elite',cursive;font-size:.7rem;background:rgba(201,150,42,.15);color:var(--gold);border:1px solid rgba(201,150,42,.3);padding:.15rem .5rem">${t}</span>`).join('');
   const ec = document.getElementById('postEyecatch');
-  if (post.image) { ec.src = post.image; ec.style.display = 'block'; }
-  else { ec.style.display = 'none'; }
-
-  // Gallery (max 10)
+  if (post.image) { ec.src = post.image; ec.style.display = 'block'; } else { ec.style.display = 'none'; }
   const gallery = (post.gallery||[]).slice(0,10);
   const galEl = document.getElementById('postGallery');
-  if (gallery.length) {
-    lbImages = gallery;
-    galEl.innerHTML = gallery.map((src,i) =>
-      `<img src="${src}" alt="写真${i+1}" loading="lazy" onclick="openLightbox(-1,${i})">`
-    ).join('');
-    galEl.style.display = 'grid';
-  } else {
-    galEl.style.display = 'none';
-    galEl.innerHTML = '';
-    lbImages = [];
-  }
-
-  // Body
+  if (gallery.length) { lbImages = gallery; galEl.innerHTML = gallery.map((src,i) => `<img src="${src}" alt="写真${i+1}" loading="lazy" onclick="openLightbox(-1,${i})">`).join(''); galEl.style.display = 'grid'; } else { galEl.style.display = 'none'; lbImages = []; }
   document.getElementById('postBody').innerHTML = marked.parse(post.body||'');
 }
 
-function showHome() {
-  document.getElementById('post-page').style.display = 'none';
-  document.getElementById('home-page').style.display = 'block';
-  window.scrollTo(0, 0);
-}
+function showHome() { document.getElementById('post-page').style.display = 'none'; document.getElementById('home-page').style.display = 'block'; window.scrollTo(0, 0); }
 
-// ═══════════════════════════════════════════════════
-// LIGHTBOX
-// ═══════════════════════════════════════════════════
 function openLightbox(albumIdx, imgIdx) {
-  if (albumIdx >= 0) {
-    const alb = G.albums[albumIdx];
-    lbImages = alb ? (alb.images||[]) : [];
-  }
-  lbIdx = imgIdx;
-  if (!lbImages.length) return;
+  if (albumIdx >= 0) { const alb = G.albums[albumIdx]; lbImages = alb ? (alb.images||[]) : []; }
+  lbIdx = imgIdx; if (!lbImages.length) return;
   document.getElementById('lightboxImg').src = lbImages[lbIdx];
   document.getElementById('lightbox').classList.add('open');
 }
 function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
-function lbNav(dir) {
-  lbIdx = (lbIdx + dir + lbImages.length) % lbImages.length;
-  document.getElementById('lightboxImg').src = lbImages[lbIdx];
-}
+function lbNav(dir) { lbIdx = (lbIdx + dir + lbImages.length) % lbImages.length; document.getElementById('lightboxImg').src = lbImages[lbIdx]; }
 document.getElementById('lightbox').addEventListener('click', e => { if (e.target === e.currentTarget) closeLightbox(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); if (e.key === 'ArrowRight') lbNav(1); if (e.key === 'ArrowLeft') lbNav(-1); });
 
-// ═══════════════════════════════════════════════════
-// UI HELPERS
-// ═══════════════════════════════════════════════════
 function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('open'); }
 function closeMenu()  { document.getElementById('mobileMenu').classList.remove('open'); }
 
 function setupReveal() {
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
-  }, { threshold: .12 });
+  const io = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } }); }, { threshold: .12 });
   document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 }
 
@@ -721,34 +563,32 @@ function startNotes() {
     n.className = 'note';
     n.textContent = syms[Math.floor(Math.random()*syms.length)];
     n.style.cssText = `left:${Math.random()*95}%;bottom:${Math.random()*40}%;font-size:${1+Math.random()*2}rem;animation-duration:${4+Math.random()*4}s`;
-    nc.appendChild(n);
-    setTimeout(() => n.remove(), 8000);
+    nc.appendChild(n); setTimeout(() => n.remove(), 8000);
   }, 700);
 }
 
-// Custom cursor
-const cursor = document.getElementById('cursor');
-const follow = document.getElementById('cursorFollow');
+const cursor = document.getElementById('cursor'), follow = document.getElementById('cursorFollow');
 let mx=0, my=0, fx=0, fy=0;
 document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
-(function animCursor() {
-  cursor.style.left = mx+'px'; cursor.style.top = my+'px';
-  fx += (mx-fx)*.12; fy += (my-fy)*.12;
-  follow.style.left = fx+'px'; follow.style.top = fy+'px';
-  requestAnimationFrame(animCursor);
-})();
+(function animCursor() { cursor.style.left = mx+'px'; cursor.style.top = my+'px'; fx += (mx-fx)*.12; fy += (my-fy)*.12; follow.style.left = fx+'px'; follow.style.top = fy+'px'; requestAnimationFrame(animCursor); })();
 
-// Smooth scroll for anchor links
-document.addEventListener('click', e => {
-  const a = e.target.closest('a[href^="#"]');
-  if (a) {
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
-  }
-});
+document.addEventListener('click', e => { const a = e.target.closest('a[href^="#"]'); if (a) { const target = document.querySelector(a.getAttribute('href')); if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); } } });
 
-// ── BOOT ──
 loadAll();
 </script>
+
+<!-- 【追加】ログイン後のリダイレクト処理 -->
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
+
 </body>
 </html>
