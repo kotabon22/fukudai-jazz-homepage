@@ -1,0 +1,32 @@
+---
+title: 学祭ライブ 2025 大盛況で終幕！
+date: 2025-11-02
+emoji: 🎷
+tags:
+  - ライブ
+  - 学祭
+draft: false
+image: ""
+gallery: []
+---
+
+## 当日の様子
+
+今年の文化祭ライブは過去最大の観客数を記録しました。練習の成果を存分に発揮することができました。
+
+### セットリスト
+
+- Autumn Leaves
+- All of Me  
+- Blue Bossa
+- Take the A Train
+- So What
+- My Favorite Things
+
+> 「今年のジャズ研、レベル上がりすぎてない？」— 観客の方より
+
+アンコールにも応えることができ、締めくくりは全員で「Sing Sing Sing」を熱演しました。
+
+## 次回ライブ予定
+
+年明けに春のライブを予定しています。詳細は随時SNSでお知らせします。

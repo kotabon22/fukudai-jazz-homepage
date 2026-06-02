@@ -1,0 +1,8 @@
+{
+  "links": [
+    {"label":"Instagram","url":"https://instagram.com/","icon":"📸","color":"#e1306c"},
+    {"label":"Twitter / X","url":"https://twitter.com/","icon":"🐦","color":"#1da1f2"},
+    {"label":"入部フォーム","url":"https://forms.gle/XXXXXXXXXXXXXXXX","icon":"📝","color":"#c9962a"},
+    {"label":"YouTube","url":"https://youtube.com/","icon":"▶️","color":"#ff0000"}
+  ]
+}
