@@ -1,0 +1,141 @@
+backend:
+  name: github
+  repo: YOUR_GITHUB_NAME/fukudai-jazz
+  branch: main
+  commit_messages:
+    create: "🎷 {{title}}"
+    update: "✏️ {{title}}"
+    delete: "🗑️ {{title}}"
+
+publish_mode: simple
+
+media_library:
+  name: cloudinary
+  config:
+    cloud_name: CLOUDINARY_CLOUD_NAME
+    api_key: CLOUDINARY_API_KEY
+
+site_url: https://YOUR_GITHUB_NAME.github.io/fukudai-jazz
+display_url: https://YOUR_GITHUB_NAME.github.io/fukudai-jazz
+
+collections:
+
+  - name: posts
+    label: 活動報告
+    label_singular: 記事
+    folder: _posts
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: タイトル, name: title, widget: string }
+      - { label: 日付, name: date, widget: datetime, format: "YYYY-MM-DD", time_format: false }
+      - { label: 絵文字, name: emoji, widget: string, default: "🎵" }
+      - { label: タグ, name: tags, widget: list, allow_add: true, required: false }
+      - label: アイキャッチ画像
+        name: image
+        widget: image
+        required: false
+        choose_url: false
+      - label: ギャラリー（最大10枚）
+        name: gallery
+        widget: list
+        max: 10
+        field:
+          label: 画像
+          name: image
+          widget: image
+          choose_url: false
+        required: false
+      - { label: 本文, name: body, widget: markdown }
+
+  - name: album
+    label: フォトアルバム
+    label_singular: アルバム
+    folder: _album
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: アルバムタイトル, name: title, widget: string }
+      - { label: キャプション, name: caption, widget: string, required: false }
+      - { label: 日付, name: date, widget: datetime, format: "YYYY-MM-DD", time_format: false }
+      - label: 写真（最大20枚）
+        name: images
+        widget: list
+        max: 20
+        field:
+          label: 画像
+          name: image
+          widget: image
+          choose_url: false
+
+  - name: settings
+    label: サイト設定
+    files:
+
+      - label: 基本情報
+        name: general
+        file: _data/general.json
+        fields:
+          - { label: サークル名, name: club_name, widget: string }
+          - { label: 英語名, name: club_name_en, widget: string }
+          - { label: 創設年, name: established, widget: string }
+          - { label: メンバー数表示, name: member_count, widget: string }
+          - { label: 年間ライブ数表示, name: live_count, widget: string }
+          - { label: 活動年数表示, name: years, widget: string }
+          - { label: 入部フォームURL, name: form_url, widget: string }
+
+      - label: メンバー
+        name: members
+        file: _data/members.json
+        fields:
+          - label: メンバー一覧
+            name: members
+            widget: list
+            fields:
+              - { label: 名前, name: name, widget: string }
+              - { label: 役職(英), name: role, widget: string, default: Member }
+              - { label: 役職(日), name: role_jp, widget: string, required: false }
+              - { label: 楽器, name: instrument, widget: string }
+              - { label: 学年, name: year, widget: string }
+              - { label: 絵文字, name: emoji, widget: string, default: "🎵" }
+
+      - label: 活動スケジュール
+        name: schedule
+        file: _data/schedule.json
+        fields:
+          - label: スケジュール一覧
+            name: schedule
+            widget: list
+            fields:
+              - { label: 時期ラベル, name: day, widget: string }
+              - { label: イベント名, name: title, widget: string }
+              - { label: アイコン, name: icon, widget: string, default: "🎵" }
+              - { label: 日時詳細, name: detail, widget: string }
+              - { label: 場所, name: place, widget: string }
+
+      - label: リンクツリー
+        name: links
+        file: _data/links.json
+        fields:
+          - label: リンク一覧
+            name: links
+            widget: list
+            fields:
+              - { label: ラベル, name: label, widget: string }
+              - { label: URL, name: url, widget: string }
+              - { label: アイコン, name: icon, widget: string, default: "🔗" }
+              - { label: カラー, name: color, widget: color, default: "#c9962a" }
+
+      - label: セクション順序
+        name: sections
+        file: _data/sections.json
+        fields:
+          - label: セクション一覧
+            name: sections
+            widget: list
+            fields:
+              - { label: セクションID, name: id, widget: string }
+              - { label: 種類, name: type, widget: select, options: [about, schedule, reports, album, members, links, join, custom] }
+              - { label: ナビラベル, name: label, widget: string }
+              - { label: 表示する, name: enabled, widget: boolean, default: true }
+              - { label: カスタム本文, name: content, widget: markdown, required: false }

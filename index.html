@@ -1,0 +1,1839 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="page-title">福井大学ジャズ研究会</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Special+Elite&family=Noto+Serif+JP:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- marked.js for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- js-yaml for frontmatter parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js.yaml.min.js"></script>
+    <!-- Netlify Identity -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("login", (user) =>
+          console.log("User logged in:", user),
+        );
+        window.netlifyIdentity.on("logout", () =>
+          console.log("User logged out"),
+        );
+        window.netlifyIdentity.on("error", (err) =>
+          console.error("Auth error:", err),
+        );
+      }
+    </script>
+    <style>
+      /* ===== VARIABLES ===== */
+      :root {
+        --ink: #1a1008;
+        --paper: #f5ead6;
+        --paper-dark: #e8d5b0;
+        --gold: #c9962a;
+        --gold-light: #e8b84b;
+        --red: #8b2020;
+        --cream: #fdf6e3;
+        --smoke: #6b5d4a;
+        --radius: 4px;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Noto Serif JP", serif;
+        overflow-x: hidden;
+        cursor: none;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 100;
+        opacity: 0.4;
+        mix-blend-mode: multiply;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+      }
+      /* ===== CURSOR ===== */
+      .cursor {
+        width: 12px;
+        height: 12px;
+        border: 2px solid var(--gold);
+        border-radius: 50%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9999;
+        transition:
+          transform 0.15s,
+          background 0.15s;
+        transform: translate(-50%, -50%);
+      }
+      .cursor-follow {
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--gold);
+        border-radius: 50%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 9998;
+        transition: transform 0.35s;
+        transform: translate(-50%, -50%);
+        opacity: 0.5;
+      }
+      body:hover .cursor {
+        background: var(--gold);
+      }
+      /* ===== NAV ===== */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 500;
+        background: var(--ink);
+        border-bottom: 2px solid var(--gold);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 3rem;
+        font-family: "Special Elite", cursive;
+      }
+      .nav-logo {
+        color: var(--gold);
+        font-size: 1.1rem;
+        letter-spacing: 0.12em;
+        text-decoration: none;
+      }
+      .nav-logo span {
+        color: var(--paper);
+      }
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+        list-style: none;
+      }
+      .nav-links a {
+        color: var(--paper);
+        text-decoration: none;
+        font-size: 0.85rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        transition: color 0.2s;
+        position: relative;
+      }
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--gold);
+        transform: scaleX(0);
+        transition: transform 0.25s;
+      }
+      .nav-links a:hover {
+        color: var(--gold-light);
+      }
+      .nav-links a:hover::after {
+        transform: scaleX(1);
+      }
+      .hamburger {
+        display: none;
+        flex-direction: column;
+        gap: 5px;
+        cursor: pointer;
+      }
+      .hamburger span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--gold);
+        transition: all 0.3s;
+      }
+      .mobile-menu {
+        display: none;
+        position: fixed;
+        top: 56px;
+        left: 0;
+        right: 0;
+        background: var(--ink);
+        border-bottom: 2px solid var(--gold);
+        padding: 1.5rem 2rem;
+        z-index: 499;
+        flex-direction: column;
+        gap: 1.2rem;
+      }
+      .mobile-menu.open {
+        display: flex;
+      }
+      .mobile-menu a {
+        color: var(--paper);
+        text-decoration: none;
+        font-family: "Special Elite", cursive;
+        letter-spacing: 0.2em;
+        font-size: 0.9rem;
+      }
+      /* ===== DIVIDER ===== */
+      .divider {
+        width: 100%;
+        height: 2px;
+        background: repeating-linear-gradient(
+          90deg,
+          var(--gold) 0,
+          var(--gold) 6px,
+          transparent 6px,
+          transparent 12px
+        );
+        opacity: 0.6;
+      }
+      /* ===== SECTIONS ===== */
+      section {
+        padding: 6rem 2rem;
+      }
+      .section-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .section-label {
+        font-family: "Special Elite", cursive;
+        font-size: 0.75rem;
+        letter-spacing: 0.4em;
+        text-transform: uppercase;
+        color: var(--gold);
+        margin-bottom: 0.5rem;
+      }
+      .section-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 700;
+        font-style: italic;
+        line-height: 1.1;
+        margin-bottom: 2rem;
+      }
+      /* ===== HERO ===== */
+      #hero {
+        min-height: 100vh;
+        background: var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-bg {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse at 20% 50%,
+            rgba(201, 150, 42, 0.12) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse at 80% 30%,
+            rgba(139, 32, 32, 0.1) 0%,
+            transparent 50%
+          ),
+          var(--ink);
+      }
+      .notes-container {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+      .note {
+        position: absolute;
+        color: var(--gold);
+        opacity: 0;
+        animation: floatNote 6s ease-in-out infinite;
+      }
+      @keyframes floatNote {
+        0% {
+          opacity: 0;
+          transform: translateY(0) rotate(0deg);
+        }
+        20% {
+          opacity: 0.25;
+        }
+        80% {
+          opacity: 0.15;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-120px) rotate(20deg);
+        }
+      }
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 2rem;
+      }
+      .hero-eyebrow {
+        font-family: "Special Elite", cursive;
+        color: var(--gold);
+        letter-spacing: 0.4em;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        opacity: 0;
+        animation: fadeUp 0.8s ease forwards 0.3s;
+      }
+      .hero-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(3.5rem, 10vw, 8rem);
+        font-weight: 900;
+        font-style: italic;
+        color: var(--paper);
+        line-height: 0.9;
+        opacity: 0;
+        animation: fadeUp 0.9s ease forwards 0.5s;
+      }
+      .hero-title .accent {
+        color: var(--gold);
+      }
+      .hero-jp {
+        font-size: clamp(1.2rem, 3vw, 2rem);
+        color: var(--paper-dark);
+        letter-spacing: 0.25em;
+        margin-top: 0.5rem;
+        opacity: 0;
+        animation: fadeUp 0.9s ease forwards 1s;
+      }
+      .hero-sub {
+        font-family: "Noto Serif JP", serif;
+        color: var(--smoke);
+        font-size: 1rem;
+        letter-spacing: 0.3em;
+        margin-top: 1.5rem;
+        opacity: 0;
+        animation: fadeUp 0.9s ease forwards 0.8s;
+      }
+      .hero-cta {
+        margin-top: 3rem;
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        opacity: 0;
+        animation: fadeUp 0.9s ease forwards 1.2s;
+      }
+      .scroll-ind {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--smoke);
+        font-family: "Special Elite", cursive;
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        opacity: 0;
+        animation: fadeIn 1s ease forwards 2s;
+      }
+      .scroll-ind::after {
+        content: "";
+        display: block;
+        width: 1px;
+        height: 40px;
+        background: linear-gradient(to bottom, var(--gold), transparent);
+        animation: scrollLine 1.5s ease infinite;
+      }
+      @keyframes scrollLine {
+        0% {
+          transform: scaleY(0);
+          transform-origin: top;
+        }
+        50% {
+          transform: scaleY(1);
+          transform-origin: top;
+        }
+        51% {
+          transform-origin: bottom;
+        }
+        100% {
+          transform: scaleY(0);
+          transform-origin: bottom;
+        }
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      /* ===== BUTTONS ===== */
+      .btn {
+        font-family: "Special Elite", cursive;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        padding: 0.9rem 2.2rem;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        cursor: none;
+        display: inline-block;
+      }
+      .btn-primary {
+        background: var(--gold);
+        color: var(--ink);
+        border: 2px solid var(--gold);
+      }
+      .btn-primary:hover {
+        background: transparent;
+        color: var(--gold);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(201, 150, 42, 0.3);
+      }
+      .btn-secondary {
+        background: transparent;
+        color: var(--paper);
+        border: 2px solid var(--smoke);
+      }
+      .btn-secondary:hover {
+        border-color: var(--gold);
+        color: var(--gold);
+        transform: translateY(-2px);
+      }
+      /* ===== ABOUT ===== */
+      #about {
+        background: var(--cream);
+      }
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5rem;
+        align-items: center;
+      }
+      .about-text p {
+        line-height: 1.9;
+        color: var(--smoke);
+        margin-bottom: 1.2rem;
+        font-size: 0.95rem;
+      }
+      .vinyl-wrap {
+        width: 280px;
+        height: 280px;
+        margin: 0 auto;
+        position: relative;
+      }
+      .vinyl {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: conic-gradient(
+          from 0deg,
+          #1a1008 0deg,
+          #2a1e10 20deg,
+          #1a1008 40deg,
+          #2a1e10 60deg,
+          #1a1008 80deg,
+          #2a1e10 100deg,
+          #1a1008 120deg,
+          #2a1e10 140deg,
+          #1a1008 160deg,
+          #2a1e10 180deg,
+          #1a1008 200deg,
+          #2a1e10 220deg,
+          #1a1008 240deg,
+          #2a1e10 260deg,
+          #1a1008 280deg,
+          #2a1e10 300deg,
+          #1a1008 320deg,
+          #2a1e10 340deg,
+          #1a1008 360deg
+        );
+        box-shadow: 0 20px 60px rgba(26, 16, 8, 0.4);
+        animation: spin 12s linear infinite;
+        position: relative;
+      }
+      .vinyl::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          var(--gold-light) 0%,
+          var(--gold) 40%,
+          var(--ink) 42%
+        );
+      }
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .stat-row {
+        display: flex;
+        gap: 2rem;
+        margin-top: 2.5rem;
+      }
+      .stat-num {
+        font-family: "Playfair Display", serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--gold);
+        line-height: 1;
+      }
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--smoke);
+        letter-spacing: 0.1em;
+        margin-top: 0.3rem;
+      }
+      /* ===== SCHEDULE ===== */
+      #schedule {
+        background: var(--paper);
+      }
+      .schedule-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 3rem;
+      }
+      .schedule-card {
+        background: var(--ink);
+        color: var(--paper);
+        padding: 2rem 1.5rem;
+        border-bottom: 3px solid var(--gold);
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s;
+      }
+      .schedule-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 60px;
+        height: 60px;
+        background: var(--gold);
+        clip-path: polygon(100% 0, 100% 100%, 0 0);
+        opacity: 0.2;
+      }
+      .schedule-card:hover {
+        transform: translateY(-5px);
+      }
+      .sched-day {
+        font-family: "Special Elite", cursive;
+        font-size: 0.75rem;
+        letter-spacing: 0.3em;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 0.5rem;
+      }
+      .sched-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.3rem;
+        font-style: italic;
+        margin-bottom: 0.5rem;
+      }
+      .sched-detail {
+        font-size: 0.85rem;
+        color: var(--smoke);
+      }
+      /* ===== REPORTS ===== */
+      #reports {
+        background: var(--cream);
+      }
+      .reports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+      .report-card {
+        background: var(--paper);
+        border: 1px solid var(--paper-dark);
+        overflow: hidden;
+        transition: all 0.3s;
+        cursor: none;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+      }
+      .report-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 16px 48px rgba(26, 16, 8, 0.15);
+      }
+      .report-thumb {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+      }
+      .report-placeholder {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, var(--ink) 0%, #2d1e0f 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        position: relative;
+      }
+      .report-placeholder::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+        opacity: 0.5;
+      }
+      .report-body {
+        padding: 1.5rem;
+      }
+      .report-date {
+        font-family: "Special Elite", cursive;
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+        color: var(--gold);
+        margin-bottom: 0.5rem;
+      }
+      .report-title {
+        font-family: "Playfair Display", serif;
+        font-size: 1.2rem;
+        font-style: italic;
+        margin-bottom: 0.5rem;
+        line-height: 1.3;
+      }
+      .report-desc {
+        font-size: 0.85rem;
+        color: var(--smoke);
+        line-height: 1.7;
+      }
+      /* ===== ALBUM ===== */
+      #album {
+        background: var(--paper);
+      }
+      .album-section {
+        margin-bottom: 3.5rem;
+      }
+      .album-caption {
+        font-size: 0.9rem;
+        color: var(--smoke);
+        margin-bottom: 1rem;
+      }
+      .album-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 0.75rem;
+      }
+      .album-img {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        cursor: zoom-in;
+        transition:
+          transform 0.3s,
+          filter 0.3s;
+        filter: sepia(10%);
+      }
+      .album-img:hover {
+        transform: scale(1.03);
+        filter: sepia(0%);
+      }
+      /* Lightbox */
+      .lightbox {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(26, 16, 8, 0.95);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+      }
+      .lightbox.open {
+        display: flex;
+      }
+      .lightbox img {
+        max-width: 90vw;
+        max-height: 90vh;
+        object-fit: contain;
+      }
+      .lightbox-close {
+        position: absolute;
+        top: 1.5rem;
+        right: 2rem;
+        color: var(--gold);
+        font-size: 2rem;
+        cursor: pointer;
+        font-family: "Special Elite", cursive;
+        line-height: 1;
+      }
+      .lightbox-prev,
+      .lightbox-next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--gold);
+        font-size: 2rem;
+        cursor: pointer;
+        background: rgba(26, 16, 8, 0.5);
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+      }
+      .lightbox-prev {
+        left: 1rem;
+      }
+      .lightbox-next {
+        right: 1rem;
+      }
+      .lightbox-prev:hover,
+      .lightbox-next:hover {
+        background: rgba(201, 150, 42, 0.3);
+      }
+      /* ===== MEMBERS ===== */
+      #members {
+        background: var(--ink);
+      }
+      #members .section-title {
+        color: var(--paper);
+      }
+      .members-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 1.5rem;
+      }
+      .member-card {
+        text-align: center;
+        padding: 1.5rem 1rem;
+        border: 1px solid rgba(201, 150, 42, 0.2);
+        transition: all 0.3s;
+      }
+      .member-card:hover {
+        border-color: var(--gold);
+        background: rgba(201, 150, 42, 0.05);
+      }
+      .member-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--gold) 0%, var(--red) 100%);
+        margin: 0 auto 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+      }
+      .member-name {
+        font-family: "Noto Serif JP", serif;
+        color: var(--paper);
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+      }
+      .member-role {
+        font-family: "Special Elite", cursive;
+        font-size: 0.7rem;
+        color: var(--gold);
+        letter-spacing: 0.1em;
+      }
+      .member-inst {
+        font-size: 0.75rem;
+        color: var(--smoke);
+        margin-top: 0.25rem;
+      }
+      /* ===== LINKS (Linktree) ===== */
+      #links {
+        background: var(--cream);
+      }
+      .links-inner {
+        max-width: 520px;
+        margin: 0 auto;
+      }
+      .link-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+        margin-bottom: 0.75rem;
+        border: 1px solid var(--paper-dark);
+        background: var(--paper);
+        text-decoration: none;
+        color: var(--ink);
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+      .link-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+      }
+      .link-item:hover {
+        transform: translateX(6px);
+        box-shadow: 0 4px 24px rgba(26, 16, 8, 0.12);
+      }
+      .link-icon {
+        font-size: 1.5rem;
+        width: 2rem;
+        text-align: center;
+        flex-shrink: 0;
+      }
+      .link-label {
+        font-family: "Special Elite", cursive;
+        letter-spacing: 0.1em;
+        font-size: 0.95rem;
+      }
+      .link-arrow {
+        margin-left: auto;
+        color: var(--smoke);
+        font-size: 1.1rem;
+        transition: transform 0.3s;
+      }
+      .link-item:hover .link-arrow {
+        transform: translateX(4px);
+      }
+      /* ===== JOIN ===== */
+      #join {
+        background: var(--paper);
+        text-align: center;
+      }
+      .join-inner {
+        max-width: 700px;
+        margin: 0 auto;
+      }
+      .join-deco {
+        font-family: "Playfair Display", serif;
+        font-size: 6rem;
+        color: var(--gold);
+        opacity: 0.15;
+        line-height: 1;
+        margin-bottom: -1rem;
+        font-style: italic;
+      }
+      .join-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+        text-align: left;
+      }
+      .join-card {
+        background: var(--cream);
+        padding: 1.5rem;
+        border-left: 3px solid var(--gold);
+      }
+      .join-card-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+      .join-card-title {
+        font-family: "Special Elite", cursive;
+        letter-spacing: 0.1em;
+        font-size: 0.85rem;
+        color: var(--gold);
+        margin-bottom: 0.4rem;
+        text-transform: uppercase;
+      }
+      .join-card-text {
+        font-size: 0.85rem;
+        color: var(--smoke);
+        line-height: 1.7;
+      }
+      /* ===== CUSTOM SECTION ===== */
+      .custom-section {
+        background: var(--cream);
+      }
+      .custom-body {
+        max-width: 780px;
+        line-height: 1.9;
+        color: var(--smoke);
+        font-size: 0.95rem;
+      }
+      .custom-body h1,
+      .custom-body h2 {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+        color: var(--ink);
+        margin-bottom: 1rem;
+      }
+      .custom-body h2 {
+        border-left: 3px solid var(--gold);
+        padding-left: 0.75rem;
+        font-size: 1.4rem;
+      }
+      .custom-body p {
+        margin-bottom: 1rem;
+      }
+      /* ===== POST PAGE ===== */
+      #post-page {
+        display: none;
+      }
+      .post-hero-wrap {
+        padding: 8rem 2rem 4rem;
+        background: var(--ink);
+        position: relative;
+        overflow: hidden;
+      }
+      .post-hero-wrap::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          ellipse at 30% 50%,
+          rgba(201, 150, 42, 0.1) 0%,
+          transparent 60%
+        );
+      }
+      .post-hero-inner {
+        max-width: 800px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+      }
+      .post-eyebrow {
+        font-family: "Special Elite", cursive;
+        color: var(--gold);
+        letter-spacing: 0.3em;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+      }
+      .post-eyebrow a {
+        color: var(--gold);
+        text-decoration: none;
+        cursor: none;
+      }
+      .post-eyebrow a:hover {
+        text-decoration: underline;
+      }
+      .post-hero-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2rem, 6vw, 3.5rem);
+        font-weight: 900;
+        font-style: italic;
+        color: var(--paper);
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+      }
+      .post-eyecatch {
+        width: 100%;
+        max-height: 480px;
+        object-fit: cover;
+        display: block;
+      }
+      .post-body-wrap {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 3rem 2rem 5rem;
+      }
+      .post-body {
+        line-height: 1.9;
+        font-size: 0.95rem;
+      }
+      .post-body h1,
+      .post-body h2 {
+        font-family: "Playfair Display", serif;
+        font-style: italic;
+      }
+      .post-body h2 {
+        font-size: 1.4rem;
+        border-left: 3px solid var(--gold);
+        padding-left: 0.75rem;
+        margin: 2rem 0 1rem;
+      }
+      .post-body h3 {
+        font-size: 1.1rem;
+        color: var(--gold);
+        margin: 1.5rem 0 0.5rem;
+      }
+      .post-body p {
+        margin-bottom: 1rem;
+      }
+      .post-body ul,
+      .post-body ol {
+        margin: 0.5rem 0 1rem 1.5rem;
+      }
+      .post-body li {
+        margin-bottom: 0.4rem;
+        line-height: 1.8;
+      }
+      .post-body blockquote {
+        border-left: 3px solid var(--gold);
+        margin: 1.5rem 0;
+        padding: 0.75rem 1.25rem;
+        background: var(--cream);
+        color: var(--smoke);
+        font-style: italic;
+      }
+      .post-body img {
+        max-width: 100%;
+        border-radius: var(--radius);
+        margin: 1rem 0;
+      }
+      .post-body a {
+        color: var(--red);
+      }
+      .post-body hr {
+        border: none;
+        border-top: 1px solid var(--paper-dark);
+        margin: 2rem 0;
+      }
+      /* ===== Gallery in post ===== */
+      .post-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 0.75rem;
+        margin: 2rem 0;
+      }
+      .post-gallery img {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+        cursor: zoom-in;
+        transition: transform 0.3s;
+      }
+      .post-gallery img:hover {
+        transform: scale(1.04);
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--smoke);
+        text-decoration: none;
+        font-family: "Special Elite", cursive;
+        font-size: 0.8rem;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        margin-bottom: 2rem;
+        transition: color 0.2s;
+        cursor: none;
+      }
+      .back-link:hover {
+        color: var(--gold);
+      }
+      /* ===== FOOTER ===== */
+      footer {
+        background: var(--ink);
+        color: var(--smoke);
+        padding: 3rem 2rem;
+        text-align: center;
+        border-top: 2px solid var(--gold);
+      }
+      .footer-logo {
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+        font-style: italic;
+        color: var(--gold);
+        margin-bottom: 0.5rem;
+      }
+      .footer-sub {
+        font-family: "Special Elite", cursive;
+        letter-spacing: 0.2em;
+        font-size: 0.75rem;
+        margin-bottom: 1.5rem;
+      }
+      .footer-links {
+        display: flex;
+        gap: 2rem;
+        justify-content: center;
+        list-style: none;
+        margin-bottom: 2rem;
+      }
+      .footer-links a {
+        color: var(--smoke);
+        text-decoration: none;
+        font-size: 0.8rem;
+        letter-spacing: 0.1em;
+        transition: color 0.2s;
+      }
+      .footer-links a:hover {
+        color: var(--gold);
+      }
+      .footer-copy {
+        font-size: 0.75rem;
+        opacity: 0.5;
+        letter-spacing: 0.1em;
+      }
+      /* ===== REVEAL ===== */
+      .reveal {
+        opacity: 0;
+        transform: translateY(40px);
+        transition:
+          opacity 0.7s,
+          transform 0.7s;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 768px) {
+        nav {
+          padding: 0.75rem 1.5rem;
+        }
+        .nav-links {
+          display: none;
+        }
+        .hamburger {
+          display: flex;
+        }
+        .about-grid {
+          grid-template-columns: 1fr;
+          gap: 3rem;
+        }
+        .vinyl-wrap {
+          width: 200px;
+          height: 200px;
+        }
+        .join-cards {
+          grid-template-columns: 1fr;
+        }
+        section {
+          padding: 4rem 1.2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-follow" id="cursorFollow"></div>
+
+    <!-- NAV (populated by JS) -->
+    <nav>
+      <a href="#hero" class="nav-logo" onclick="showHome()"
+        >Jazz<span>研</span></a
+      >
+      <ul class="nav-links" id="navLinks"></ul>
+      <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </div>
+    </nav>
+    <div class="mobile-menu" id="mobileMenu"></div>
+
+    <!-- ========== HOME PAGE ========== -->
+    <div id="home-page">
+      <!-- HERO -->
+      <section id="hero">
+        <div class="hero-bg"></div>
+        <div class="notes-container" id="notesContainer"></div>
+        <div class="hero-content">
+          <div class="hero-eyebrow" id="heroEyebrow">
+            Fukui University · Est. ——
+          </div>
+          <h1 class="hero-title">
+            <span class="accent">Jazz</span><br />Research<br />Club
+          </h1>
+          <div class="hero-jp" id="heroJp">福井大学ジャズ研究会</div>
+          <p class="hero-sub">— Swing It. Feel It. Live It. —</p>
+          <div class="hero-cta">
+            <a href="#join" class="btn btn-primary" id="heroCta1"
+              >入部希望はこちら</a
+            >
+            <a href="#reports" class="btn btn-secondary">活動報告を見る</a>
+          </div>
+        </div>
+        <div class="scroll-ind">Scroll</div>
+      </section>
+
+      <!-- DYNAMIC SECTIONS -->
+      <div id="dynamic-sections"></div>
+    </div>
+    <!-- /home-page -->
+
+    <!-- ========== POST PAGE ========== -->
+    <div id="post-page">
+      <div class="post-hero-wrap">
+        <div class="post-hero-inner">
+          <div class="post-eyebrow">
+            <a
+              href="#"
+              onclick="
+                showHome();
+                return false;
+              "
+              >← 活動報告一覧</a
+            >
+          </div>
+          <h1 class="post-hero-title" id="postTitle"></h1>
+          <div
+            style="
+              display: flex;
+              gap: 1rem;
+              align-items: center;
+              color: var(--smoke);
+              font-size: 0.82rem;
+            "
+            id="postMeta"
+          ></div>
+        </div>
+      </div>
+      <img
+        id="postEyecatch"
+        class="post-eyecatch"
+        src=""
+        alt=""
+        style="display: none"
+      />
+      <div class="post-body-wrap">
+        <a
+          href="#"
+          class="back-link"
+          onclick="
+            showHome();
+            return false;
+          "
+          >← 活動報告一覧に戻る</a
+        >
+        <div id="postGallery" class="post-gallery"></div>
+        <div class="post-body" id="postBody"></div>
+      </div>
+    </div>
+    <!-- /post-page -->
+
+    <footer id="site-footer">
+      <div class="footer-logo">Jazz研</div>
+      <div class="footer-sub" id="footerSub">
+        Fukui University Jazz Research Club
+      </div>
+      <ul class="footer-links" id="footerLinks"></ul>
+      <div class="footer-copy" id="footerCopy">
+        © 2025 福井大学ジャズ研究会 · All Rights Reserved
+      </div>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+      <div class="lightbox-close" onclick="closeLightbox()">✕</div>
+      <div class="lightbox-prev" onclick="lbNav(-1)">‹</div>
+      <img id="lightboxImg" src="" alt="" />
+      <div class="lightbox-next" onclick="lbNav(1)">›</div>
+    </div>
+
+    <script>
+      // ═══════════════════════════════════════════════════
+      // STATE
+      // ═══════════════════════════════════════════════════
+      let G = {
+        cfg: {},
+        members: [],
+        schedule: [],
+        links: [],
+        sections: [],
+        posts: [],
+        albums: [],
+      };
+      let lbImages = [],
+        lbIdx = 0;
+
+      // ═══════════════════════════════════════════════════
+      // DATA LOADING
+      // Parse YAML frontmatter + Markdown body
+      // ═══════════════════════════════════════════════════
+      function parseFrontmatter(raw) {
+        const match = raw.match(/^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/);
+        if (!match) return { meta: {}, body: raw };
+        try {
+          const meta = jsyaml.load(match[1]) || {};
+          return { meta, body: match[2] };
+        } catch (e) {
+          return { meta: {}, body: match[2] };
+        }
+      }
+
+      async function fetchJSON(url) {
+        const r = await fetch(url + "?v=" + Date.now());
+        return r.json();
+      }
+
+      async function fetchText(url) {
+        const r = await fetch(url + "?v=" + Date.now());
+        if (!r.ok) throw new Error(r.status);
+        return r.text();
+      }
+
+      // Fetch a list of .md files from a directory listing (works on Netlify)
+      // We list known posts via a manifest or just try a directory fetch
+      async function loadMarkdownList(dir) {
+        try {
+          // Try fetching index listing (works if Netlify has a directory listing or we have a manifest)
+          const txt = await fetchText(dir + "/");
+          // Parse <a href="filename.md"> links
+          const links = [...txt.matchAll(/href="([^"]+\.md)"/g)].map(
+            (m) => m[1],
+          );
+          const results = [];
+          for (const lnk of links) {
+            const raw = await fetchText(dir + "/" + lnk);
+            const { meta, body } = parseFrontmatter(raw);
+            results.push({
+              ...meta,
+              body,
+              slug: lnk.replace(/^\d{4}-\d{2}-\d{2}-/, "").replace(".md", ""),
+              filename: lnk,
+            });
+          }
+          return results;
+        } catch (e) {
+          // Fallback: try loading from a manifest file _posts/manifest.json
+          try {
+            const manifest = await fetchJSON(dir + "/manifest.json");
+            const results = [];
+            for (const fn of manifest) {
+              const raw = await fetchText(dir + "/" + fn);
+              const { meta, body } = parseFrontmatter(raw);
+              results.push({
+                ...meta,
+                body,
+                slug: fn.replace(/^\d{4}-\d{2}-\d{2}-/, "").replace(".md", ""),
+                filename: fn,
+              });
+            }
+            return results;
+          } catch (e2) {
+            return [];
+          }
+        }
+      }
+
+      async function loadAll() {
+        try {
+          const [gen, mem, sched, lnk, sec] = await Promise.all([
+            fetchJSON("_data/general.json"),
+            fetchJSON("_data/members.json"),
+            fetchJSON("_data/schedule.json"),
+            fetchJSON("_data/links.json"),
+            fetchJSON("_data/sections.json"),
+          ]);
+          G.cfg = gen;
+          G.members = mem.members || [];
+          G.schedule = sched.schedule || [];
+          G.links = lnk.links || [];
+          G.sections = sec.sections || [];
+        } catch (e) {
+          console.warn("Data load error", e);
+        }
+
+        // Posts & Albums (markdown)
+        const [posts, albums] = await Promise.all([
+          loadMarkdownList("_posts"),
+          loadMarkdownList("_album"),
+        ]);
+        G.posts = posts
+          .filter((p) => !p.draft)
+          .sort((a, b) => (b.date > a.date ? 1 : -1));
+        G.albums = albums.sort((a, b) => (b.date > a.date ? 1 : -1));
+
+        renderAll();
+      }
+
+      // ═══════════════════════════════════════════════════
+      // RENDER
+      // ═══════════════════════════════════════════════════
+      function renderAll() {
+        const cfg = G.cfg;
+        // Hero
+        document.getElementById("heroEyebrow").textContent =
+          `Fukui University · Est. ${cfg.established || "——"}`;
+        document.getElementById("heroJp").textContent =
+          cfg.club_name || "福井大学ジャズ研究会";
+        document.getElementById("heroCta1").href = cfg.form_url || "#join";
+        document.title = cfg.club_name || "福井大学ジャズ研究会";
+        // Footer
+        document.getElementById("footerSub").textContent =
+          cfg.club_name_en || "";
+        document.getElementById("footerCopy").textContent =
+          `© ${new Date().getFullYear()} ${cfg.club_name || "福井大学ジャズ研究会"} · All Rights Reserved`;
+
+        // Nav
+        const enabledSections = G.sections.filter((s) => s.enabled);
+        const navLinks = document.getElementById("navLinks");
+        const mobileMenu = document.getElementById("mobileMenu");
+        navLinks.innerHTML = enabledSections
+          .map(
+            (s) =>
+              `<li><a href="#${s.id}" onclick="closeMenu()">${s.label}</a></li>`,
+          )
+          .join("");
+        mobileMenu.innerHTML = enabledSections
+          .map((s) => `<a href="#${s.id}" onclick="closeMenu()">${s.label}</a>`)
+          .join("");
+
+        // Footer nav links
+        document.getElementById("footerLinks").innerHTML = enabledSections
+          .slice(0, 5)
+          .map((s) => `<li><a href="#${s.id}">${s.label}</a></li>`)
+          .join("");
+
+        // Dynamic sections
+        const container = document.getElementById("dynamic-sections");
+        container.innerHTML = "";
+        let prevType = null;
+        G.sections.forEach((sec) => {
+          if (!sec.enabled) return;
+          const el = buildSection(sec);
+          if (el) {
+            if (prevType !== null) {
+              const div = document.createElement("div");
+              div.className = "divider";
+              container.appendChild(div);
+            }
+            container.appendChild(el);
+            prevType = sec.type;
+          }
+        });
+
+        // Floating notes
+        startNotes();
+        // Scroll reveal
+        setupReveal();
+      }
+
+      function buildSection(sec) {
+        switch (sec.type) {
+          case "about":
+            return buildAbout(sec);
+          case "schedule":
+            return buildSchedule(sec);
+          case "reports":
+            return buildReports(sec);
+          case "album":
+            return buildAlbum(sec);
+          case "members":
+            return buildMembers(sec);
+          case "links":
+            return buildLinks(sec);
+          case "join":
+            return buildJoin(sec);
+          case "custom":
+            return buildCustom(sec);
+          default:
+            return null;
+        }
+      }
+
+      function el(tag, cls, html) {
+        const e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (html !== undefined) e.innerHTML = html;
+        return e;
+      }
+
+      // ── About ──────────────────────────────────────────
+      function buildAbout(sec) {
+        const cfg = G.cfg;
+        const wrap = el("section", "");
+        wrap.id = sec.id;
+        wrap.style.background = "var(--cream)";
+        wrap.innerHTML = `
+    <div class="section-inner">
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <div class="section-label">About Us</div>
+          <h2 class="section-title">福大ジャズ研<br>について</h2>
+          <p>福井大学ジャズ研究会は、ジャズを愛するすべての学生が集まるサークルです。初心者から経験者まで、ジャンルにとらわれず、ともに音楽を楽しむことを大切にしています。</p>
+          <p>週の練習では基礎から応用まで幅広く取り組み、学園祭や学外ライブなど年間を通じて多くの演奏機会があります。楽器未経験でも大歓迎です。</p>
+          <div class="stat-row">
+            <div class="stat"><div class="stat-num">${cfg.member_count || "30+"}</div><div class="stat-label">メンバー</div></div>
+            <div class="stat"><div class="stat-num">${cfg.years || "10+"}</div><div class="stat-label">年の歴史</div></div>
+            <div class="stat"><div class="stat-num">${cfg.live_count || "5+"}</div><div class="stat-label">年間ライブ</div></div>
+          </div>
+        </div>
+        <div class="reveal"><div class="vinyl-wrap"><div class="vinyl"></div></div></div>
+      </div>
+    </div>`;
+        return wrap;
+      }
+
+      // ── Schedule ───────────────────────────────────────
+      function buildSchedule(sec) {
+        const wrap = el("section", "");
+        wrap.id = sec.id;
+        const cards = G.schedule
+          .map(
+            (s) => `
+    <div class="schedule-card reveal">
+      <div class="sched-day">${s.day}</div>
+      <div class="sched-title">${s.icon} ${s.title}</div>
+      <div class="sched-detail">${s.detail}<br>${s.place}</div>
+    </div>`,
+          )
+          .join("");
+        wrap.innerHTML = `
+    <div class="section-inner">
+      <div class="reveal"><div class="section-label">Activity</div><h2 class="section-title">活動スケジュール</h2></div>
+      <div class="schedule-grid">${cards}</div>
+    </div>`;
+        return wrap;
+      }
+
+      // ── Reports ────────────────────────────────────────
+      function buildReports(sec) {
+        const wrap = el("section", "");
+        wrap.id = sec.id;
+        wrap.style.background = "var(--cream)";
+        const cards = G.posts
+          .map((p) => {
+            const thumb = p.image
+              ? `<img src="${p.image}" class="report-thumb" alt="${p.title}">`
+              : `<div class="report-placeholder">${p.emoji || "🎵"}</div>`;
+            const excerpt =
+              (p.body || "").replace(/[#*`>\-]/g, "").slice(0, 100) + "…";
+            return `
+      <a class="report-card reveal" href="#" onclick="showPost('${p.slug}');return false;">
+        ${thumb}
+        <div class="report-body">
+          <div class="report-date">${p.date || ""}</div>
+          <div class="report-title">${p.title || ""}</div>
+          <div class="report-desc">${excerpt}</div>
+        </div>
+      </a>`;
+          })
+          .join("");
+        wrap.innerHTML = `
+    <div class="section-inner">
+      <div class="reveal"><div class="section-label">Activity Reports</div><h2 class="section-title">活動報告</h2></div>
+      <div class="reports-grid">${cards || '<p style="color:var(--smoke)">まだ記事がありません。</p>'}</div>
+    </div>`;
+        return wrap;
+      }
+
+      // ── Album ──────────────────────────────────────────
+      function buildAlbum(sec) {
+        const wrap = el("section", "");
+        wrap.id = sec.id;
+        const sections = G.albums
+          .map((alb, ai) => {
+            const imgs = (alb.images || [])
+              .map(
+                (src, ii) =>
+                  `<img src="${src}" class="album-img" alt="${alb.title}" loading="lazy"
+            onclick="openLightbox(${ai}, ${ii})">`,
+              )
+              .join("");
+            return `
+      <div class="album-section reveal">
+        <h3 style="font-family:'Playfair Display',serif;font-style:italic;font-size:1.4rem;margin-bottom:.4rem">${alb.title}</h3>
+        ${alb.caption ? `<p class="album-caption">${alb.caption}</p>` : ""}
+        <div class="album-grid">${imgs || '<p style="color:var(--smoke);font-size:.85rem">写真はCMSからアップロードできます</p>'}</div>
+      </div>`;
+          })
+          .join("");
+        wrap.innerHTML = `
+    <div class="section-inner">
+      <div class="reveal"><div class="section-label">Photo Album</div><h2 class="section-title">フォトアルバム</h2></div>
+      ${sections || '<p style="color:var(--smoke)">アルバムはCMSから作成できます。</p>'}
+    </div>`;
+        return wrap;
+      }
+
+      // ── Members ────────────────────────────────────────
+      function buildMembers(sec) {
+        const wrap = el("section", "");
+        wrap.id = sec.id;
+        wrap.style.background = "var(--ink)";
+        const cards = G.members
+          .map(
+            (m) => `
+    <div class="member-card reveal">
+      <div class="member-avatar">${m.emoji}</div>
+      <div class="member-name">${m.role_jp ? m.role_jp + "　" : ""}${m.name}</div>
+      <div class="member-role">${m.role}</div>
+      <div class="member-inst">${m.instrument}${m.year ? " · " + m.year : ""}</div>
+    </div>`,
+          )
+          .join("");
+        wrap.innerHTML = `
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label" style="color:var(--gold)">Members</div>
+        <h2 class="section-title" style="color:var(--paper)">メンバー紹介</h2>
+      </div>
+      <div class="members-grid">
+        ${cards}
+        <div class="member-card reveal">
+          <div class="member-avatar">🎵</div>
+          <div class="member-name">新メンバー募集中！</div>
+          <div class="member-role">Join Us</div>
+          <div class="member-inst">あなたの楽器で</div>
+        </div>
+      </div>
+    </div>`;
+        return wrap;
+      }
+
+      // ── Links (Linktree) ───────────────────────────────
+      function buildLinks(sec) {
+        const wrap = el("section", "");
+        wrap.id = sec.id;
+        wrap.style.background = "var(--cream)";
+        const items = G.links
+          .map(
+            (lnk) => `
+    <a class="link-item reveal" href="${lnk.url}" target="_blank" rel="noopener"
+       style="--lc:${lnk.color || "var(--gold)"}">
+      <style>.link-item[href="${lnk.url}"]::before{background:${lnk.color || "var(--gold)"}}</style>
+      <span class="link-icon">${lnk.icon}</span>
+      <span class="link-label">${lnk.label}</span>
+      <span class="link-arrow">→</span>
+    </a>`,
+          )
+          .join("");
+        wrap.innerHTML = `
+    <div class="section-inner">
+      <div class="reveal"><div class="section-label">Links</div><h2 class="section-title">リンク</h2></div>
+      <div class="links-inner">${items}</div>
+    </div>`;
+        return wrap;
+      }
+
+      // ── Join ───────────────────────────────────────────
+      function buildJoin(sec) {
+        const wrap = el("section", "");
+        wrap.id = sec.id;
+        const formUrl = G.cfg.form_url || "#";
+        wrap.innerHTML = `
+    <div class="join-inner">
+      <div class="reveal">
+        <div class="join-deco">♪</div>
+        <div class="section-label" style="text-align:center">Join &amp; Contact</div>
+        <h2 class="section-title" style="text-align:center">一緒に演奏しよう</h2>
+        <p style="color:var(--smoke);font-size:1rem;line-height:1.9;margin-bottom:2.5rem">
+          ジャズに興味があるなら、楽器が初めてでも大歓迎。<br>見学はいつでも受け付けています。</p>
+      </div>
+      <div class="join-cards reveal">
+        <div class="join-card"><div class="join-card-icon">🎷</div><div class="join-card-title">入部希望</div><div class="join-card-text">フォームから入部希望をお送りください。楽器未経験者も歓迎です。</div></div>
+        <div class="join-card"><div class="join-card-icon">👁</div><div class="join-card-title">見学・体験</div><div class="join-card-text">練習日に見学・体験参加OK。事前連絡ください。</div></div>
+        <div class="join-card"><div class="join-card-icon">📅</div><div class="join-card-title">活動日程</div><div class="join-card-text">水曜・土曜が主な活動日。スケジュール参照。</div></div>
+        <div class="join-card"><div class="join-card-icon">📬</div><div class="join-card-title">お問い合わせ</div><div class="join-card-text">ご質問やライブ出演依頼も同フォームからどうぞ。</div></div>
+      </div>
+      <div class="reveal">
+        <a href="${formUrl}" target="_blank" class="btn btn-primary" style="font-size:1rem;padding:1.1rem 3rem">
+          入部・お問い合わせフォームへ →
+        </a>
+      </div>
+    </div>`;
+        return wrap;
+      }
+
+      // ── Custom ─────────────────────────────────────────
+      function buildCustom(sec) {
+        if (!sec.content) return null;
+        const wrap = el("section", "custom-section");
+        wrap.id = sec.id;
+        wrap.innerHTML = `
+    <div class="section-inner">
+      <div class="reveal">
+        <div class="section-label">${sec.label}</div>
+        <div class="custom-body">${marked.parse(sec.content)}</div>
+      </div>
+    </div>`;
+        return wrap;
+      }
+
+      // ═══════════════════════════════════════════════════
+      // POST PAGE
+      // ═══════════════════════════════════════════════════
+      function showPost(slug) {
+        const post = G.posts.find((p) => p.slug === slug);
+        if (!post) return;
+
+        document.getElementById("home-page").style.display = "none";
+        document.getElementById("post-page").style.display = "block";
+        window.scrollTo(0, 0);
+
+        document.getElementById("postTitle").textContent =
+          (post.emoji || "") + " " + (post.title || "");
+        document.getElementById("postMeta").innerHTML =
+          `<span>📅 ${post.date || ""}</span>` +
+          (post.tags || [])
+            .map(
+              (t) =>
+                `<span style="font-family:'Special Elite',cursive;font-size:.7rem;background:rgba(201,150,42,.15);color:var(--gold);border:1px solid rgba(201,150,42,.3);padding:.15rem .5rem">${t}</span>`,
+            )
+            .join("");
+
+        // Eyecatch
+        const ec = document.getElementById("postEyecatch");
+        if (post.image) {
+          ec.src = post.image;
+          ec.style.display = "block";
+        } else {
+          ec.style.display = "none";
+        }
+
+        // Gallery (max 10)
+        const gallery = (post.gallery || []).slice(0, 10);
+        const galEl = document.getElementById("postGallery");
+        if (gallery.length) {
+          lbImages = gallery;
+          galEl.innerHTML = gallery
+            .map(
+              (src, i) =>
+                `<img src="${src}" alt="写真${i + 1}" loading="lazy" onclick="openLightbox(-1,${i})">`,
+            )
+            .join("");
+          galEl.style.display = "grid";
+        } else {
+          galEl.style.display = "none";
+          galEl.innerHTML = "";
+          lbImages = [];
+        }
+
+        // Body
+        document.getElementById("postBody").innerHTML = marked.parse(
+          post.body || "",
+        );
+      }
+
+      function showHome() {
+        document.getElementById("post-page").style.display = "none";
+        document.getElementById("home-page").style.display = "block";
+        window.scrollTo(0, 0);
+      }
+
+      // ═══════════════════════════════════════════════════
+      // LIGHTBOX
+      // ═══════════════════════════════════════════════════
+      function openLightbox(albumIdx, imgIdx) {
+        if (albumIdx >= 0) {
+          const alb = G.albums[albumIdx];
+          lbImages = alb ? alb.images || [] : [];
+        }
+        lbIdx = imgIdx;
+        if (!lbImages.length) return;
+        document.getElementById("lightboxImg").src = lbImages[lbIdx];
+        document.getElementById("lightbox").classList.add("open");
+      }
+      function closeLightbox() {
+        document.getElementById("lightbox").classList.remove("open");
+      }
+      function lbNav(dir) {
+        lbIdx = (lbIdx + dir + lbImages.length) % lbImages.length;
+        document.getElementById("lightboxImg").src = lbImages[lbIdx];
+      }
+      document.getElementById("lightbox").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) closeLightbox();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeLightbox();
+        if (e.key === "ArrowRight") lbNav(1);
+        if (e.key === "ArrowLeft") lbNav(-1);
+      });
+
+      // ═══════════════════════════════════════════════════
+      // UI HELPERS
+      // ═══════════════════════════════════════════════════
+      function toggleMenu() {
+        document.getElementById("mobileMenu").classList.toggle("open");
+      }
+      function closeMenu() {
+        document.getElementById("mobileMenu").classList.remove("open");
+      }
+
+      function setupReveal() {
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add("visible");
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.12 },
+        );
+        document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+      }
+
+      function startNotes() {
+        const syms = ["♩", "♪", "♫", "♬", "𝄞"];
+        const nc = document.getElementById("notesContainer");
+        setInterval(() => {
+          const n = document.createElement("div");
+          n.className = "note";
+          n.textContent = syms[Math.floor(Math.random() * syms.length)];
+          n.style.cssText = `left:${Math.random() * 95}%;bottom:${Math.random() * 40}%;font-size:${1 + Math.random() * 2}rem;animation-duration:${4 + Math.random() * 4}s`;
+          nc.appendChild(n);
+          setTimeout(() => n.remove(), 8000);
+        }, 700);
+      }
+
+      // Custom cursor
+      const cursor = document.getElementById("cursor");
+      const follow = document.getElementById("cursorFollow");
+      let mx = 0,
+        my = 0,
+        fx = 0,
+        fy = 0;
+      document.addEventListener("mousemove", (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+      });
+      (function animCursor() {
+        cursor.style.left = mx + "px";
+        cursor.style.top = my + "px";
+        fx += (mx - fx) * 0.12;
+        fy += (my - fy) * 0.12;
+        follow.style.left = fx + "px";
+        follow.style.top = fy + "px";
+        requestAnimationFrame(animCursor);
+      })();
+
+      // Smooth scroll for anchor links
+      document.addEventListener("click", (e) => {
+        const a = e.target.closest('a[href^="#"]');
+        if (a) {
+          const target = document.querySelector(a.getAttribute("href"));
+          if (target) {
+            e.preventDefault();
+            target.scrollIntoView({ behavior: "smooth" });
+          }
+        }
+      });
+
+      // ── BOOT ──
+      loadAll();
+    </script>
+  </body>
+</html>

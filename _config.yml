@@ -1,0 +1,17 @@
+title: 福井大学ジャズ研究会
+description: Jazz Research Club at Fukui University
+baseurl: /fukudai-jazz
+url: https://YOUR_GITHUB_NAME.github.io
+
+exclude:
+  - .gitignore
+  - .env.local
+  - .env.*.local
+  - README.md
+  - admin
+  - _posts
+  - _album
+  - _data
+
+gems:
+  - jekyll-feed
